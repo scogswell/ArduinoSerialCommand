@@ -4,8 +4,6 @@ a serial port.
 Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
 http://awtfy.com
 
-Version 20110523B.   
-
 See SerialCommand.h for version history. 
 
 This library is free software; you can redistribute it and/or
