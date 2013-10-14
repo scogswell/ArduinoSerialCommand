@@ -6,14 +6,13 @@ An alternate version of this library is available as https://github.com/kroimon/
 
 This version is the one on Github. 
 
-
 /******************************************************************************* 
 SerialCommand - An Arduino library to tokenize and parse commands received over
 a serial port. 
-Copyright (C) 2011 Steven Cogswell  <steven.cogswell@gmail.com>
-http://husks.wordpress.com  
+Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
+http://awtfy.com
 
-Version 20110523B.   
+Version 20131014A.   
 
 Version History:
 May 11 2011 - Initial version
@@ -21,6 +20,9 @@ May 13 2011 -	Prevent overwriting bounds of SerialCommandCallback[] array in add
 			defaultHandler() for non-matching commands
 Mar 2012 - Some const char * changes to make compiler happier about deprecated warnings.  
            Arduino 1.0 compatibility (Arduino.h header) 
+Oct 2013 - SerialCommand object can be created using a SoftwareSerial object, for SoftwareSerial
+           support.  Requires #include <SoftwareSerial.h> in your sketch even if you don't use 
+           a SoftwareSerial port in the project.  sigh.   See Example Sketch for usage. 
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
