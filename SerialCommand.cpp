@@ -1,8 +1,8 @@
 /******************************************************************************* 
 SerialCommand - An Arduino library to tokenize and parse commands received over
 a serial port. 
-Copyright (C) 2011 Steven Cogswell  <steven.cogswell@gmail.com>
-http://husks.wordpress.com  
+Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
+http://awtfy.com
 
 Version 20110523B.   
 
@@ -30,16 +30,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <string.h>
+#include <SoftwareSerial.h>
 #include "SerialCommand.h"
 
 // Constructor makes sure some things are set. 
 SerialCommand::SerialCommand()
 {
+	usingSoftwareSerial=0;
 	strncpy(delim," ",MAXDELIMETER);  // strtok_r needs a null-terminated string
 	term='\r';   // return character, default terminator for commands
 	numCommand=0;    // Number of callback handlers installed
 	clearBuffer(); 
 }
+
+// Constructor to use a SoftwareSerial object
+SerialCommand::SerialCommand(SoftwareSerial &_SoftSer)
+{
+	usingSoftwareSerial=1; 
+	SoftSerial = &_SoftSer;
+	strncpy(delim," ",MAXDELIMETER);  // strtok_r needs a null-terminated string
+	term='\r';   // return character, default terminator for commands
+	numCommand=0;    // Number of callback handlers installed
+	clearBuffer(); 
+}
+
 
 //
 // Initialize the command buffer being processed to all null characters
@@ -67,11 +81,18 @@ char *SerialCommand::next()
 // buffer for a prefix command, and calls handlers setup by addCommand() member
 void SerialCommand::readSerial() 
 {
-	while (Serial.available() > 0) 
+	// If we're using the Hardware port, check it.   Otherwise check the user-created SoftwareSerial Port
+	while ((usingSoftwareSerial==0 && Serial.available() > 0) || (usingSoftwareSerial==1 && SoftSerial->available() > 0) )
 	{
 		int i; 
 		boolean matched; 
-		inChar=Serial.read();   // Read single available character, there may be more waiting
+		if (usingSoftwareSerial==0) {
+			// Hardware serial port
+			inChar=Serial.read();   // Read single available character, there may be more waiting
+		} else {
+			// SoftwareSerial port
+			inChar = SoftSerial->read();   // Read single available character, there may be more waiting
+		}
 		#ifdef SERIALCOMMANDDEBUG
 		Serial.print(inChar);   // Echo back to serial stream
 		#endif

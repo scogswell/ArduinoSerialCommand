@@ -1,10 +1,10 @@
 /******************************************************************************* 
 SerialCommand - An Arduino library to tokenize and parse commands received over
 a serial port. 
-Copyright (C) 2011 Steven Cogswell  <steven.cogswell@gmail.com>
-http://husks.wordpress.com  
+Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
+http://awtfy.com
 
-Version 20110523B.   
+Version 20131014A.   
 
 Version History:
 May 11 2011 - Initial version
@@ -12,6 +12,9 @@ May 13 2011 -	Prevent overwriting bounds of SerialCommandCallback[] array in add
 			defaultHandler() for non-matching commands
 Mar 2012 - Some const char * changes to make compiler happier about deprecated warnings.  
            Arduino 1.0 compatibility (Arduino.h header) 
+Oct 2013 - SerialCommand object can be created using a SoftwareSerial object, for SoftwareSerial
+           support.  Requires #include <SoftwareSerial.h> in your sketch even if you don't use 
+           a SoftwareSerial port in the project.  sigh.   See Example Sketch for usage. 
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -36,7 +39,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "WProgram.h"
 #endif
   
+#include <SoftwareSerial.h>  
 #include <string.h>
+
 
 #define SERIALCOMMANDBUFFER 16
 #define MAXSERIALCOMMANDS	10
@@ -49,6 +54,8 @@ class SerialCommand
 {
 	public:
 		SerialCommand();      // Constructor
+		SerialCommand(SoftwareSerial &SoftSer);  // Constructor for using SoftwareSerial objects
+
 		void clearBuffer();   // Sets the command buffer to all '\0' (nulls)
 		char *next();         // returns pointer to next token found in command buffer (for getting arguments to commands)
 		void readSerial();    // Main entry point.  
@@ -70,6 +77,8 @@ class SerialCommand
 		int numCommand;
 		SerialCommandCallback CommandList[MAXSERIALCOMMANDS];   // Actual definition for command/handler array
 		void (*defaultHandler)();           // Pointer to the default handler function 
+		int usingSoftwareSerial;            // Used as boolean to see if we're using SoftwareSerial object or not
+		SoftwareSerial *SoftSerial;         // Pointer to a user-created SoftwareSerial object
 };
 
 #endif //SerialCommand_h
