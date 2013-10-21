@@ -12,7 +12,7 @@ a serial port.
 Copyright (C) 2011-2013 Steven Cogswell  <steven.cogswell@gmail.com>
 http://awtfy.com
 
-Version 20131014A.   
+Version 20131021A.   
 
 Version History:
 May 11 2011 - Initial version
@@ -23,6 +23,8 @@ Mar 2012 - Some const char * changes to make compiler happier about deprecated w
 Oct 2013 - SerialCommand object can be created using a SoftwareSerial object, for SoftwareSerial
            support.  Requires #include <SoftwareSerial.h> in your sketch even if you don't use 
            a SoftwareSerial port in the project.  sigh.   See Example Sketch for usage. 
+Oct 2013 - Conditional compilation for the SoftwareSerial support, in case you really, really
+           hate it and want it removed. 
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
