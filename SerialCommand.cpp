@@ -27,9 +27,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "WProgram.h"
 #endif
 
-#include <string.h>
-#include <SoftwareSerial.h>
 #include "SerialCommand.h"
+
+
+#include <string.h>
+#ifndef SERIALCOMMAND_HARDWAREONLY
+#include <SoftwareSerial.h>
+#endif
 
 // Constructor makes sure some things are set. 
 SerialCommand::SerialCommand()
@@ -41,6 +45,7 @@ SerialCommand::SerialCommand()
 	clearBuffer(); 
 }
 
+#ifndef SERIALCOMMAND_HARDWAREONLY
 // Constructor to use a SoftwareSerial object
 SerialCommand::SerialCommand(SoftwareSerial &_SoftSer)
 {
@@ -51,6 +56,7 @@ SerialCommand::SerialCommand(SoftwareSerial &_SoftSer)
 	numCommand=0;    // Number of callback handlers installed
 	clearBuffer(); 
 }
+#endif
 
 
 //
@@ -80,7 +86,11 @@ char *SerialCommand::next()
 void SerialCommand::readSerial() 
 {
 	// If we're using the Hardware port, check it.   Otherwise check the user-created SoftwareSerial Port
+	#ifdef SERIALCOMMAND_HARDWAREONLY
+	while (Serial.available() > 0) 
+	#else
 	while ((usingSoftwareSerial==0 && Serial.available() > 0) || (usingSoftwareSerial==1 && SoftSerial->available() > 0) )
+	#endif
 	{
 		int i; 
 		boolean matched; 
@@ -88,8 +98,10 @@ void SerialCommand::readSerial()
 			// Hardware serial port
 			inChar=Serial.read();   // Read single available character, there may be more waiting
 		} else {
+			#ifndef SERIALCOMMAND_HARDWAREONLY
 			// SoftwareSerial port
 			inChar = SoftSerial->read();   // Read single available character, there may be more waiting
+			#endif
 		}
 		#ifdef SERIALCOMMANDDEBUG
 		Serial.print(inChar);   // Echo back to serial stream
